@@ -11,11 +11,12 @@ out vec3 FragPos;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform mat4 normal_matrix;
 
 void main()
 {
     gl_Position = projection * view * model * vec4(aPos, 1.0f);
     VertexColor = aColor;
-    Normal = vec3(model * vec4(aNormal, 0.0f));
+    Normal = normalize(vec3(normal_matrix * vec4(aNormal, 0.0f)));
     FragPos = vec3(model * vec4(aPos, 1.0f));
 }

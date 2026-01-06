@@ -1,9 +1,11 @@
 #pragma once
 
-#include "../Core/Input.hpp"
-#include "../Core/KeyCodes.hpp"
-#include "../glad/glad.h"
-#include <GLFW/glfw3.h>
+#include "Input.hpp"
+#include "KeyCodes.hpp"
+
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
+
 #include <string>
 #include <memory>
 #include <print>
@@ -68,6 +70,8 @@ namespace rge
                 glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
                 glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
                 glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+                glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+                glfwWindowHint(GLFW_SAMPLES, 32);
                 glfwWindowHint(GLFW_CENTER_CURSOR, GLFW_TRUE);
                 
                 m_window = glfwCreateWindow(m_width, m_height, m_name.c_str(), NULL, NULL);

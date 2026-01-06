@@ -65,7 +65,7 @@ namespace rge
 
         private:
             std::vector<std::shared_ptr<Entity>> m_entities;
-            glm::vec3 m_light_position = glm::vec3(5.0f, 10.0f, 5.0f);
+            glm::vec3 m_light_position = glm::vec3(0.0f, 10.0f, 0.0f);
             float m_time = 0.0f;
             std::shared_ptr<Player> m_player_entity = nullptr;
     };

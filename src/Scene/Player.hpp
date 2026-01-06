@@ -3,6 +3,10 @@
 #include "Entity.hpp"
 #include "../Core/Input.hpp"
 #include "../Core/KeyCodes.hpp"
+#include <print>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/vector_angle.hpp>
 
 namespace rge
 {
@@ -12,12 +16,13 @@ namespace rge
             Player() : Entity()
             {
                 m_position = glm::vec3(0.0f, 0.5f, 0.0f);
+                m_rotation = glm::vec3(0.0f, 1.0f, 0.0f);
             }
 
             void Update(float delta_time) override
             {
-                Move(delta_time);
                 Turn(delta_time);
+                Move(delta_time);
             }
 
             float GetPitch()
@@ -45,10 +50,10 @@ namespace rge
             {
                 float distance = delta_time * m_speed;
 
-                if(Input::IsKeyPressed(KeyCode::KEY_W)) m_position.z -= distance;
-                if(Input::IsKeyPressed(KeyCode::KEY_S)) m_position.z += distance;
-                if(Input::IsKeyPressed(KeyCode::KEY_A)) m_position.x -= distance;
-                if(Input::IsKeyPressed(KeyCode::KEY_D)) m_position.x += distance;
+                if(Input::IsKeyPressed(KeyCode::KEY_W)) m_position += distance * m_front;
+                if(Input::IsKeyPressed(KeyCode::KEY_S)) m_position -= distance * m_front;
+                // if(Input::IsKeyPressed(KeyCode::KEY_A)) m_position.x -= distance;
+                // if(Input::IsKeyPressed(KeyCode::KEY_D)) m_position.x += distance;
             }
 
             void Turn(float delta_time)
@@ -64,27 +69,27 @@ namespace rge
                 x_offset *= m_sensitivity * delta_time;
                 y_offset *= m_sensitivity * delta_time;
 
-                m_yaw += x_offset;
+                m_yaw -= x_offset;
                 m_pitch += y_offset;
 
                 // Constrain the pitch
                 if(m_pitch > 89.0f) m_pitch = 89.0f;
                 if(m_pitch < -89.0f) m_pitch = -89.0f;
+
+                auto front = glm::vec3(sinf(m_yaw), 0.0f, cosf(m_yaw));
+                m_front = glm::normalize(front);
             }
 
         private:
-            float m_speed = 5.0f;
-            bool m_jump = false;
-            float m_air_time = 0.0f;
-            float m_gravity = 9.81f;
-            float m_rise_time = 0.5f;
+            float m_speed = 15.0f;
 
-            // Mouse related
-            float m_sensitivity = 5.0f;
+            float m_sensitivity = 2.0f;
             float m_pitch = 0.0f;
-            float m_yaw = -90.0f;
+            float m_yaw = 0.0f;
 
-            float m_r = 3.0f;
+            float m_r = 2.0f;
             float m_alpha = 30.0f;
+
+            glm::vec3 m_front = glm::vec3(0.0f, 0.0f, -1.0f);
     };
 }
