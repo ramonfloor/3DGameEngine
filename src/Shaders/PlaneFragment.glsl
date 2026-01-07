@@ -2,6 +2,7 @@
 
 in vec3 Normal;
 in vec3 FragPos;
+in vec3 Color;
 
 out vec4 FragColor;
 
@@ -10,11 +11,15 @@ uniform vec3 ViewPos;
 
 void main()
 {
-    // Checkerboard base color
-    int checkX = int(floor(FragPos.x * 2.0));
-    int checkZ = int(floor(FragPos.z * 2.0));
-    vec3 baseColor = (mod(float(checkX + checkZ), 2.0) == 0.0) ? vec3(0.8, 0.8, 0.8) : vec3(0.2, 0.2, 0.2);
-
+    // Create checkerboard pattern based on X and Z coordinates
+    int checkX = int(FragPos.x) / 50;
+    int checkZ = int(FragPos.z) / 50;
+    int checkSum = checkX + checkZ;
+    
+    vec3 baseColor = (checkSum % 2 == 0) ? vec3(0.2, 0.2, 0.2) : vec3(0.8, 0.8, 0.8);
+    
+    vec3 lightColor = vec3(1.0, 1.0, 1.0);
+    float ambientStrength = 0.1;
 
     // Normals and directions
     vec3 norm = normalize(Normal);
@@ -27,6 +32,12 @@ void main()
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * lightColor * baseColor;
 
-    vec3 result = ambient + diffuse;
+    // Specular
+    float shininess = 128.0;
+    float specularStrength = 0.4;
+    float spec = pow(max(dot(reflect(-lightDir, norm), normalize(ViewPos - FragPos)), 0.0f), shininess);
+    vec3 specular = spec * lightColor * specularStrength;
+
+    vec3 result = ambient + diffuse + specular;
     FragColor = vec4(result, 1.0);
 }

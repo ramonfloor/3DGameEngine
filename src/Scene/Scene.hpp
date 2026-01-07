@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Entity.hpp"
-#include "Player.hpp"
+#include "Camera.hpp"
+
+#include <print>
 
 #include <memory>
 
@@ -18,7 +20,8 @@ namespace rge
             void Update(const float delta_time)
             {
                 m_time += delta_time;
-                // UpdateLight(delta_time);
+                UpdateLight(delta_time);
+                m_camera.Update(delta_time);
                 for(auto& o : m_entities)
                 {
                     o->Update(delta_time);
@@ -40,14 +43,9 @@ namespace rge
                 m_entities.push_back(o);
             }
 
-            void SetPlayerEntity(const std::shared_ptr<Player> o)
+            Camera& GetCamera()
             {
-                m_player_entity = o;
-            }
-
-            std::shared_ptr<Player> GetPlayerEntity()
-            {
-                return m_player_entity;
+                return m_camera;
             }
 
         private:
@@ -56,17 +54,16 @@ namespace rge
                 float z = sinf(m_time);
                 float y = cosf(m_time);
 
-                float radius = 10.0f;
+                float radius = 500.0f;
 
-                m_light_position.x = (-1.0f) * radius * z;
                 m_light_position.y = radius * y;
-                m_light_position.z = radius * z;
+                m_light_position.z = radius * z + 250.0f;
             }
 
         private:
             std::vector<std::shared_ptr<Entity>> m_entities;
-            glm::vec3 m_light_position = glm::vec3(0.0f, 10.0f, 0.0f);
+            glm::vec3 m_light_position = glm::vec3(250.0f, 0.0f, 250.0f);
             float m_time = 0.0f;
-            std::shared_ptr<Player> m_player_entity = nullptr;
+            Camera m_camera;
     };
 }

@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include "../Camera.hpp"
+#include "Camera.hpp"
 #include "../Renderer/Mesh.hpp"
 
 namespace rge

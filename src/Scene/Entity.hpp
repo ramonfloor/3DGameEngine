@@ -4,7 +4,6 @@
 #include <memory>
 
 #include "../Renderer/Mesh.hpp"
-#include "../Camera.hpp"
 
 namespace rge
 {
@@ -46,11 +45,6 @@ namespace rge
                 return m_angle;
             }
 
-            Camera& GetCamera()
-            {
-                return m_camera;
-            }
-
             void AddMesh(std::shared_ptr<Mesh> mesh)
             {
                 m_mesh = mesh;
@@ -62,6 +56,5 @@ namespace rge
             float m_scale = 1.0f;
             float m_angle = 0.0f;
             std::shared_ptr<Mesh> m_mesh = nullptr;
-            Camera m_camera;
     };
 }

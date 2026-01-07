@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "../Scene/Scene.hpp"
-#include "../Camera.hpp"
+#include "../Scene/Camera.hpp"
 #include "Shader.hpp"
 
 namespace rge 
@@ -27,19 +27,32 @@ namespace rge
 
             void Render(std::shared_ptr<Scene> scene)
             {
-                glClearColor(0.0f, 0.5f, 1.0f, 1.0f);
+                glClearColor(0.0f, 0.8f, 1.0f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                std::shared_ptr<Player> entity = scene->GetPlayerEntity();
-                glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-                glm::vec3 eye = entity->GetPosition() + glm::vec3(sinf(entity->GetYaw()) * entity->GetR() * tan(entity->GetAlpha()), 4.0f, cosf(entity->GetYaw()) * entity->GetR() * tan(entity->GetAlpha()));
-                glm::vec3 view_direction = glm::vec3(sinf(entity->GetYaw()) * entity->GetR() * tan(entity->GetAlpha()), 4.0f, cosf(entity->GetYaw()) * entity->GetR() * tan(entity->GetAlpha())) - entity->GetPosition();
-                auto view = glm::lookAt(eye, entity->GetPosition(), up);
-                glm::mat4 projection = entity->GetCamera().GetProjection();
+                Camera& camera = scene->GetCamera();
+                auto cam_pos = camera.GetPosition();
+                auto cam_front = camera.GetFront();
+                auto view = glm::lookAt(cam_pos, cam_pos + cam_front, glm::vec3(0.0f, 1.0f, 0.0f));
+                auto projection = camera.GetProjection();
 
                 for(auto e : scene->GetEntities())
                 {
-                    Draw(e, scene->GetLightPosition(), view, projection, eye);
+                    Draw(e, scene->GetLightPosition(), view, projection, cam_pos);
+                }
+            }
+
+            void TogglePolygonMode()
+            {
+                if(m_polygon_mode)
+                {
+                    m_polygon_mode = false;
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                }
+                else
+                {
+                    m_polygon_mode = true;
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 }
             }
         
@@ -47,6 +60,7 @@ namespace rge
             void Draw(std::shared_ptr<Entity> entity, glm::vec3 light_position, glm::mat4& view, glm::mat4& projection, glm::vec3 view_position)
             {
                 auto mesh = entity->GetMesh();
+
                 auto shader_program = mesh->GetShaderProgram();
                 
                 shader_program->use();
@@ -71,5 +85,8 @@ namespace rge
 
                 glBindVertexArray(0);
             }
+        
+            private:
+                bool m_polygon_mode = false;
     };
 }

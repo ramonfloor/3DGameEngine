@@ -2,7 +2,8 @@
 
 #include "Window.hpp"
 #include "../Renderer/Renderer.hpp"
-#include "../World.hpp"
+#include "../Scene/SceneLoader.hpp"
+#include "../Scene/Scene.hpp"
 
 #include <memory>
 #include <print>
@@ -10,26 +11,19 @@
 
 namespace rge {
     class Application {
-        private:
+        public:
             Application(std::string name) : m_window(name, 1000, 1000)
             {
-                
+                m_scene = SceneLoader::CreateBasicScene();
             }
 
-        public:
             static Application* Create(std::string name)
             {
                 if(!s_instance)
                 {
-                    s_instance = new Application(name);
+                    s_instance = std::make_unique<Application>(name);
                 }
-                return s_instance;
-            }
-
-            static void Destroy()
-            {
-                delete s_instance;
-                s_instance = nullptr;
+                return s_instance.get();
             }
 
             void Run() 
@@ -40,19 +34,27 @@ namespace rge {
                     float delta_time = current_time - m_last_frame_time;
                     m_last_frame_time = current_time;
 
-                    // std::println("FPS: {}", 1.0f / delta_time);
+                    m_scene->Update(delta_time);
 
-                    m_world.Update(delta_time);
+                    bool p_down = Input::IsKeyPressed(KeyCode::KEY_P);
+              
+                    if(p_down && !m_pressed_last_frame)
+                    {
+                        std::println("Toggling polygon mode");
+                        m_renderer.TogglePolygonMode();
+                    }
 
-                    m_renderer.Render(m_world.GetActiveScene());
+                    m_pressed_last_frame = p_down;
+
+                    m_renderer.Render(m_scene);
 
                     m_window.Update();
                 }
             }
 
-            static Application& GetInstance()
+            static Application* GetInstance()
             {
-                return *s_instance;
+                return s_instance.get();
             }
 
             Window& GetWindow()
@@ -62,11 +64,14 @@ namespace rge {
 
         private:
             Window m_window;
-            World m_world;
+            std::shared_ptr<Scene> m_scene = nullptr;
             Renderer m_renderer;
             float m_last_frame_time = 0.0f;
+            bool m_pressed_last_frame = false;
+
+            // std::map<std::string, std::shared_ptr<Scene>> m_scenes; TODO: Scene management
 
         public:
-            static Application* s_instance;
+            inline static std::unique_ptr<Application> s_instance = nullptr;
     };
 }

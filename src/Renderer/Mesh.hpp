@@ -83,6 +83,5 @@ namespace rge
             GLuint m_ebo;
 
             std::shared_ptr<ShaderProgram> m_shader_program;
-
     };
 }
