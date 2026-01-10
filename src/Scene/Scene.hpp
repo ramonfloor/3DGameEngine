@@ -20,7 +20,7 @@ namespace rge
             void Update(const float delta_time)
             {
                 m_time += delta_time;
-                UpdateLight(delta_time);
+                // UpdateLight(delta_time);
                 m_camera.Update(delta_time);
                 for(auto& o : m_entities)
                 {
@@ -62,7 +62,7 @@ namespace rge
 
         private:
             std::vector<std::shared_ptr<Entity>> m_entities;
-            glm::vec3 m_light_position = glm::vec3(250.0f, 0.0f, 250.0f);
+            glm::vec3 m_light_position = glm::vec3(250.0f, 20.0f, 250.0f);
             float m_time = 0.0f;
             Camera m_camera;
     };

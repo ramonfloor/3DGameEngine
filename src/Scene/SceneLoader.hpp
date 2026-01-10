@@ -35,7 +35,7 @@ namespace rge
                 {
                     for(int x = 0; x <= widthX; x++)
                     {
-                        float y = 0.0f;
+                        float y = Height(x, z);
                         vertices.push_back({glm::vec3(x * scale, y, z * scale), glm::vec3(0.8f, 0.8f, 0.8f), CalculateNormal(x, z)});
                     }
                 }

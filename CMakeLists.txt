@@ -21,8 +21,6 @@ file(GLOB_RECURSE HS "${SOURCE_PATH}/*.h")
 file(GLOB_RECURSE CPPS "${SOURCE_PATH}/*.cpp")
 file(GLOB_RECURSE CS "${SOURCE_PATH}/*.c")
 
-list(REMOVE_ITEM CPPS "${SOURCE_PATH}/main.cpp")
-
 add_executable(sandbox ${HPPS} ${HS} ${CPPS} ${CS} ${GLAD_SOURCES})
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
