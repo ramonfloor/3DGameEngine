@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10.0)
-project(sandbox VERSION 0.1.0 LANGUAGES C CXX)
+project(engine VERSION 0.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 
@@ -9,25 +9,24 @@ find_package(OpenGL REQUIRED)
 # Add dependencies
 add_subdirectory(dependencies/glfw)
 add_subdirectory(dependencies/glm)
+add_subdirectory(dependencies/entt)
 
 # Manually add glad since it doesn't have CMakeLists
 set(GLAD_SOURCES dependencies/glad/glad.c)
-set(GLAD_INCLUDE dependencies/glad)
+set(GLAD_HEADERS dependencies/glad/glad.h)
 
 set(SOURCE_PATH "${PROJECT_SOURCE_DIR}/src")
 
-file(GLOB_RECURSE HPPS "${SOURCE_PATH}/*.hpp")
-file(GLOB_RECURSE HS "${SOURCE_PATH}/*.h")
-file(GLOB_RECURSE CPPS "${SOURCE_PATH}/*.cpp")
-file(GLOB_RECURSE CS "${SOURCE_PATH}/*.c")
+file(GLOB_RECURSE HEADER_FILES "${SOURCE_PATH}/*.hpp")
+file(GLOB_RECURSE SOURCE_FILES "${SOURCE_PATH}/*.cpp")
 
-add_executable(sandbox ${HPPS} ${HS} ${CPPS} ${CS} ${GLAD_SOURCES})
+add_executable(${PROJECT_NAME} src/Game.cpp ${GLAD_SOURCES} ${GLAD_HEADERS} ${SOURCE_FILES} ${HEADER_FILES})
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
+target_include_directories(${PROJECT_NAME} PRIVATE src)
+target_include_directories(${PROJECT_NAME} PRIVATE dependencies/glad)
+target_include_directories(${PROJECT_NAME} PRIVATE dependencies/glfw/include)
+target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/dependencies)
+target_include_directories(${PROJECT_NAME} PRIVATE dependencies/glm)
+target_include_directories(${PROJECT_NAME} PRIVATE dependencies/entt/single_include)
 
-target_include_directories(sandbox PRIVATE src)
-target_include_directories(sandbox PRIVATE ${GLAD_INCLUDE})
-target_include_directories(sandbox PRIVATE dependencies/glfw/include)
-target_include_directories(sandbox PRIVATE ${PROJECT_SOURCE_DIR}/dependencies)
-
-target_link_libraries(sandbox PRIVATE OpenGL::OpenGL glfw)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL::OpenGL glfw)

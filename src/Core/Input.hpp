@@ -1,16 +1,13 @@
 #pragma once
 
-#include "KeyCodes.hpp"
 #include <glm/glm.hpp>
+#include "KeyCodes.hpp"
 
-namespace rge
+class Input
 {
-    class Input
-    {
-        public:
-            static bool IsKeyPressed(KeyCode key);
-            static bool IsKeyRepeated(KeyCode key);
-            static bool IsKeyReleased(KeyCode key);
-            static glm::vec2 GetMousePosition();
-    };
-}
+    public:
+        static bool IsKeyPressed(KeyCode key);
+        static bool IsKeyRepeated(KeyCode key);
+        static bool IsKeyReleased(KeyCode key);
+        static glm::vec2 GetMousePosition();
+};
