@@ -1,60 +1,41 @@
 #pragma once
 
-#include <vector>
-#include <memory>
+#include <cassert>
+#include "entt/entt.hpp"
 
-#include "../Renderer/Mesh.hpp"
+#include "Scene.hpp"
 
-namespace rge
+class Entity
 {
-    class Entity
-    {
-        public:
-            Entity()
-            {
+    public:
+        Entity(entt::entity handle, Scene* scene);
 
-            }
+        template<typename ComponentType, typename... Args>
+        void AddComponent(Args&&... args)
+        {
+            m_scene->m_registry.emplace<ComponentType>(m_handle, std::forward<Args>(args)...);
+        }
 
-            virtual void Update(float delta_time)
-            { 
-                // do some calculations (position, etc.)
-            }
+        template<typename ComponentType>
+        bool HasComponent()
+        {
+            return m_scene->m_registry.any_of<ComponentType>(m_handle);
+        }
 
-            std::shared_ptr<Mesh> GetMesh()
-            {
-                return m_mesh;
-            }
+        template<typename ComponentType>
+        ComponentType& GetComponent()
+        {
+            return m_scene->m_registry.get<ComponentType>(m_handle);
+        }
 
-            glm::vec3& GetPosition()
-            {
-                return m_position;
-            }
+        template<typename ComponentType>
+        void RemoveComponent()
+        {
+            m_scene->m_registry.remove<ComponentType>(m_handle);
+        }
 
-            glm::vec3& GetRotation()
-            {
-                return m_rotation;
-            }
-
-            float GetScale()
-            {
-                return m_scale;
-            }
-
-            float GetAngle()
-            {
-                return m_angle;
-            }
-
-            void AddMesh(std::shared_ptr<Mesh> mesh)
-            {
-                m_mesh = mesh;
-            }
-
-        protected:
-            glm::vec3 m_position = glm::vec3(0.0f, 0.0f, 0.0f);
-            glm::vec3 m_rotation = glm::vec3(1.0f);
-            float m_scale = 1.0f;
-            float m_angle = 0.0f;
-            std::shared_ptr<Mesh> m_mesh = nullptr;
-    };
-}
+    private:
+        friend class Scene;
+        entt::entity m_handle;
+        Scene* m_scene;
+};

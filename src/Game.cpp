@@ -1,8 +1,11 @@
 #include "Core/Application.hpp"
 
+#include <thread>
+#include <chrono>
+
 int main()
 {
-    rge::Application* app = rge::Application::Create("Game");
+    Application* app = Application::Create("Game");
     app->Run();
     return 0;
 }
